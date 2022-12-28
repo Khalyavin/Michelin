@@ -1,9 +1,12 @@
 import csv
+import json
+import os.path
 
 path = 'E:/Work/Michelin/'
 data_file = 'michelin_data.csv'
 full_f_name = path + data_file
 full_tmp_name = path + 'tmp.csv'
+path_cache = path = 'cache/'
 
 
 def sell():
@@ -22,6 +25,27 @@ def region():
         tmp_num = 5
     else:
         tmp_num = int(tmp_num)
+
+    # Check cache
+    cache_file_name = path_cache + str(tmp_num) + '.json'
+
+    if os.path.isfile(cache_file_name):
+
+        tmp_input = input('For this request cache file exist. Recalculate? Y/[N]: ')
+
+        if tmp_input != 'Y' or tmp_input != 'y':
+            fp = open(cache_file_name, 'r', encoding='UTF-8')
+            data = json.load(fp)
+            fp.close()
+
+            cntr = 0
+            for i in range(len(data)):
+                cntr += 1
+                print(data[i])
+                if cntr >= tmp_num:
+                    return
+
+            return
 
     regions = {}
     tmp_sum = 0
@@ -47,6 +71,7 @@ def region():
         if progress_bar % 100000 == 0:
             print(tmp_region, progress_bar / 100000)
 
+    fp.close()
 
     # Не могу я ладу дать с этим sorted, проще своё написать
 #    sorted(regions, key=lambda x: x[1], reverse=True)
@@ -71,6 +96,10 @@ def region():
         print(region_sorted[i])
         if cntr >= tmp_num:
             break
+
+    fp = open(cache_file_name, 'w', encoding='UTF-8')
+    json.dump(region_sorted, fp)
+    fp.close()
 
 
 def main():
