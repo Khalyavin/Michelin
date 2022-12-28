@@ -1,0 +1,8 @@
+.idea
+env/
+venv/
+cache/
+__pycache__/
+*.pyc
+*.json
+*.csv

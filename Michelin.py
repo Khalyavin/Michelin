@@ -1,0 +1,34 @@
+def main():
+    """Course test work with big data file"""
+    import csv
+    import os
+
+    path = 'E:/Work/Michelin/'
+    data_file = 'michelin_data.csv'
+    full_f_name = path + data_file
+    full_tmp_name = path + 'tmp.csv'
+
+    fp_from = open(full_f_name, 'r', encoding='utf-8')
+    from_reader = csv.reader(fp_from)
+    header = next(from_reader)
+#    print(header)
+
+    fp_to = open(full_tmp_name, 'w', encoding='utf-8', newline='')
+    to_reader = csv.writer(fp_to)
+    to_reader.writerow(header)
+
+    cntr = 0
+    for line in from_reader:
+        cntr += 1
+        to_reader.writerow(line)
+        if cntr >= 100000:
+            break
+
+    fp_from.close()
+    fp_to.close()
+
+#    print(path, data_file, full_f_name)
+
+
+if __name__ == '__main__':
+    main()
