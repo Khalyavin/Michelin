@@ -35,15 +35,33 @@ def sell():
     day = now.day
     tmp_date = str(year) + '-' + str(month) + str(day)
 
-    print(tmp_diameter, tmp_s, tmp_cai, tmp_region, tmp_date, tmp_price)
+    sell_data = [str(tmp_diameter), str(tmp_s), str(tmp_cai), tmp_region, tmp_date, str(tmp_price)]
+    print(sell_data)
 
-    # fp = open(full_tmp_name, 'r', encoding='UTF-8')
-    # line_reader = csv.reader(fp)
-    # header = next(line_reader)
-    # init_cntr = 0
-    #
-    # for i in line_reader:
+    fp_source = open(full_f_name, 'r', encoding='UTF-8')
+    source_line_reader = csv.reader(fp_source)
+    header = next(source_line_reader)
 
+    tmp_receiver_name = path + '_tmp_.csv'
+    fp_receiver = open(tmp_receiver_name, 'w', encoding='UTF-8', newline='')
+    writer = csv.writer(fp_receiver)
+
+    prev_region = ''
+
+    for line in source_line_reader:
+
+        if line[3] != tmp_region and prev_region == tmp_region:  # Last record of tmp_region. Add sell data
+            writer.writerow(sell_data)
+
+        writer.writerow(line)
+        if line[3] != prev_region:
+            prev_region = line[3]
+
+    fp_source.close()
+    fp_receiver.close()
+
+    os.remove(full_tmp_name)
+    os.rename('_tmp_.csv', 'michelin_data.csv')
 
 
 def top():
