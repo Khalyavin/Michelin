@@ -78,7 +78,68 @@ def top():
 
 
 def latest():
-    print('Latest')
+    """Output the latest sales by regions"""
+    tmp_num = input('Number of records to output? [15]: ')
+    if tmp_num == '':
+        tmp_num = 15
+    else:
+        tmp_num = int(tmp_num)
+
+    # Check cache
+    cache_file_name = path_cache + 'latest' + str(tmp_num) + '.json'
+
+    if os.path.isfile(cache_file_name):
+
+        tmp_input = input('For this request cache file exist. Recalculate? Y/[N]: ')
+
+        if tmp_input != 'Y' or tmp_input != 'y':
+            fp = open(cache_file_name, 'r', encoding='UTF-8')
+            data = json.load(fp)
+            fp.close()
+
+            for i in range(len(data)):
+                print(data[i])
+
+            return
+
+    latest_sales = []
+
+    fp = open(full_f_name, 'r', encoding='UTF-8')
+    line_reader = csv.reader(fp)
+    header = next(line_reader)
+    init_cntr = 0
+
+    for i in line_reader:
+        if init_cntr < tmp_num:  # Filling latest sales list
+            latest_sales.append(i)
+
+        elif init_cntr == tmp_num:  # Latest sales filled and sorted
+            latest_sales.sort(key=lambda x: x[4], reverse=True)
+            if i[4] > latest_sales[-1][4]:  # One of sale later latest sales
+                latest_sales.pop()  # Update and resort latest sales
+                latest_sales.append(i)
+                latest_sales.sort(key=lambda x: x[4], reverse=True)
+
+
+        elif init_cntr > tmp_num:
+            if i[4] > latest_sales[-1][4]:  # One of sale later latest sales
+                latest_sales.pop()  # Update and resort latest sales
+                latest_sales.append(i)
+                latest_sales.sort(key=lambda x: x[4], reverse=True)
+
+        init_cntr += 1
+        if init_cntr % 100000 == 0:
+            print(i[3], init_cntr / 100000)
+
+    fp.close()
+
+    for sale in latest_sales:
+        print(sale)
+
+    fp = open(cache_file_name, 'w', encoding='UTF-8')
+    json.dump(latest_sales, fp)
+    fp.close()
+
 
 
 def region():
@@ -170,4 +231,4 @@ def main():
 
 
 if __name__ == '__main__':
-    top()
+    latest()
