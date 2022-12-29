@@ -1,16 +1,49 @@
 import csv
 import json
 import os.path
+import datetime
 
 path = 'E:/Work/Michelin/'
 data_file = 'michelin_data.csv'
 full_f_name = path + data_file
 full_tmp_name = path + 'tmp.csv'
-path_cache = path = 'cache/'
+path_cache = path + 'cache/'
 
 
 def sell():
-    print('Sell')
+    """Add sale record to file"""
+    regions = ['Georgia', 'Russia', 'Germany', 'Spain', 'USA', 'India', 'China']
+
+    print('Select region for sale record: ')
+    for i in range(len(regions)):
+        print(f'{i}. {regions[i]}')
+
+    tmp_region = input('Your choice of region? [1]: ')
+    if tmp_region == '':
+        tmp_region = regions[1]
+    else:
+        tmp_region = regions[int(tmp_region)]
+
+    tmp_cai = int(input('Input cai: '))
+    tmp_diameter = int(input('Input diameter: '))
+    tmp_s = int(input('Input tire width: '))
+    tmp_price = float(input('Input sell price: '))
+
+    now = datetime.datetime.now()
+    year = now.year
+    month = now.month
+    day = now.day
+    tmp_date = str(year) + '-' + str(month) + str(day)
+
+    print(tmp_diameter, tmp_s, tmp_cai, tmp_region, tmp_date, tmp_price)
+
+    # fp = open(full_tmp_name, 'r', encoding='UTF-8')
+    # line_reader = csv.reader(fp)
+    # header = next(line_reader)
+    # init_cntr = 0
+    #
+    # for i in line_reader:
+
 
 
 def top():
@@ -231,4 +264,4 @@ def main():
 
 
 if __name__ == '__main__':
-    latest()
+    sell()
