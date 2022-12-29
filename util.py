@@ -12,6 +12,7 @@ path_cache = path = 'cache/'
 def sell():
     print('Sell')
 
+
 def top():
     """Output the top of sales by regions"""
     tmp_num = input('Number of records to output? [15]: ')
@@ -37,10 +38,9 @@ def top():
 
             return
 
-
     top_sales = []
 
-    fp = open(full_tmp_name, 'r', encoding='UTF-8')
+    fp = open(full_f_name, 'r', encoding='UTF-8')
     line_reader = csv.reader(fp)
     header = next(line_reader)
     init_cntr = 0
@@ -52,23 +52,34 @@ def top():
         elif init_cntr == tmp_num:  # Top_sales filled and sorted
             top_sales.sort(key=lambda x: x[5], reverse=True)
             if i[5] > top_sales[-1][5]:  # One of sale greater the smallest top_sales
-                top_sales.pop()          # Update and resort top_sales
+                top_sales.pop()  # Update and resort top_sales
                 top_sales.append(i)
                 top_sales.sort(key=lambda x: x[5], reverse=True)
 
 
         elif init_cntr > tmp_num:
             if i[5] > top_sales[-1][5]:  # One of sale greater the smallest top_sales
-                top_sales.pop()          # Update and resort top_sales
+                top_sales.pop()  # Update and resort top_sales
                 top_sales.append(i)
                 top_sales.sort(key=lambda x: x[5], reverse=True)
 
         init_cntr += 1
+        if init_cntr % 100000 == 0:
+            print(i[3], init_cntr / 100000)
 
-    print(top_sales)
+    fp.close()
+
+    for sale in top_sales:
+        print(sale)
+
+    fp = open(cache_file_name, 'w', encoding='UTF-8')
+    json.dump(top_sales, fp)
+    fp.close()
+
 
 def latest():
     print('Latest')
+
 
 def region():
     """Calculate the number of sales by each region"""
@@ -126,7 +137,7 @@ def region():
     fp.close()
 
     # Не могу я ладу дать с этим sorted, проще своё написать
-#    sorted(regions, key=lambda x: x[1], reverse=True)
+    #    sorted(regions, key=lambda x: x[1], reverse=True)
 
     cntr = len(tmp_region)
     region_sorted = []
