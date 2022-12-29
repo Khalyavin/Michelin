@@ -13,14 +13,66 @@ def sell():
     print('Sell')
 
 def top():
-    print('Top')
+    """Output the top of sales by regions"""
+    tmp_num = input('Number of records to output? [15]: ')
+    if tmp_num == '':
+        tmp_num = 15
+    else:
+        tmp_num = int(tmp_num)
+
+    # Check cache
+    cache_file_name = path_cache + 'top' + str(tmp_num) + '.json'
+
+    if os.path.isfile(cache_file_name):
+
+        tmp_input = input('For this request cache file exist. Recalculate? Y/[N]: ')
+
+        if tmp_input != 'Y' or tmp_input != 'y':
+            fp = open(cache_file_name, 'r', encoding='UTF-8')
+            data = json.load(fp)
+            fp.close()
+
+            for i in range(len(data)):
+                print(data[i])
+
+            return
+
+
+    top_sales = []
+
+    fp = open(full_tmp_name, 'r', encoding='UTF-8')
+    line_reader = csv.reader(fp)
+    header = next(line_reader)
+    init_cntr = 0
+
+    for i in line_reader:
+        if init_cntr < tmp_num:  # Filling top_sales list
+            top_sales.append(i)
+
+        elif init_cntr == tmp_num:  # Top_sales filled and sorted
+            top_sales.sort(key=lambda x: x[5], reverse=True)
+            if i[5] > top_sales[-1][5]:  # One of sale greater the smallest top_sales
+                top_sales.pop()          # Update and resort top_sales
+                top_sales.append(i)
+                top_sales.sort(key=lambda x: x[5], reverse=True)
+
+
+        elif init_cntr > tmp_num:
+            if i[5] > top_sales[-1][5]:  # One of sale greater the smallest top_sales
+                top_sales.pop()          # Update and resort top_sales
+                top_sales.append(i)
+                top_sales.sort(key=lambda x: x[5], reverse=True)
+
+        init_cntr += 1
+
+    print(top_sales)
 
 def latest():
     print('Latest')
 
 def region():
     """Calculate the number of sales by each region"""
-    tmp_num = input('Сколько регионов выводить? [5]: ')
+    tmp_num = input('Number of regions to output? [5]: ')
     if tmp_num == '':
         tmp_num = 5
     else:
@@ -107,4 +159,4 @@ def main():
 
 
 if __name__ == '__main__':
-    region()
+    top()
